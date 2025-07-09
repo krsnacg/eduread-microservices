@@ -1,6 +1,12 @@
 from fastapi import FastAPI
 from enum import Enum
-import requestbody
+from requests import requestbody
+from path import pathparameters_validation
+from query import queryparameters_models, queryparameters_validation
+from body import body_multipleparams, bodyfields
+from response import responsemodel_returntype
+from security import oauth2, oauth2_jwt
+from database import sql_databases
 
 class ModelName(str, Enum):
     alexnet = "alexnet"
@@ -10,7 +16,16 @@ class ModelName(str, Enum):
 fake_items_db = [{"item_name": "Foo"}, {"item_name": "test"}, {"item_name": "Bar"}]
 
 app = FastAPI()
-app.include_router(requestbody.router)
+app.include_router(requestbody.router, tags=["request body"])
+app.include_router(queryparameters_validation.router, tags=["query parameters validation"])
+app.include_router(pathparameters_validation.router, tags=["path parameters validation"])
+app.include_router(queryparameters_models.router, tags=["query parameters models"])
+app.include_router(body_multipleparams.router, tags=["body multiple parameters"])
+app.include_router(bodyfields.router, tags=["body fields"])
+app.include_router(responsemodel_returntype.router, tags=["response model return type"])
+app.include_router(oauth2.router, tags=["security oauth2"])
+app.include_router(oauth2_jwt.router, tags=["security oauth2 jwt"])
+app.include_router(sql_databases.router, tags=["database sql databases"])
 
 @app.get("/")
 async def root():
